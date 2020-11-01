@@ -1,0 +1,27 @@
+@model IEnumerable<MailModel>
+
+@{
+    ViewData["Title"] = "Inbox";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+    <a asp-area="" asp-controller="Mail" asp-action="Create">
+        <button type="button">Create new email</button>
+    </a>
+    <table>
+        <tbody>
+        @foreach (var mail in Model)
+        {
+            <tr>
+
+                <div>
+                    @mail.Subject, @mail.Body.Substring(0, 20), @mail.From, @mail.Date
+                </div>
+
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
