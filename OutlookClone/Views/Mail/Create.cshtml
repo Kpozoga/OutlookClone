@@ -1,0 +1,22 @@
+@model MailModel
+
+@{
+    ViewData["Title"] = "Outlook Clone";
+}
+
+@using (Html.BeginForm("CreatePost", "Mail", FormMethod.Post))
+{
+    <table>
+        <tr>
+            <td>Subject: </td>
+            <td>@Html.TextBoxFor(m => m.Subject)</td>
+        </tr>
+        <tr>
+            <td>Text Body: </td>
+            <td>@Html.TextBoxFor(m => m.Body)</td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Send" /></td>
+        </tr>
+    </table>
+}
