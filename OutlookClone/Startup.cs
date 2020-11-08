@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.VisualBasic;
+using OutlookClone.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace OutlookClone
 {
@@ -26,7 +28,8 @@ namespace OutlookClone
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext(new MyDBContext(options));
+            services.AddDbContext<MyDbContext>(
+                options=>options.UseSqlServer(Configuration.GetConnectionString("MyConnectionString")));
             services.AddAuthentication(AzureADB2CDefaults.AuthenticationScheme)
                 .AddAzureADB2C(options => Configuration.Bind("AzureAdB2C", options));
             services.AddControllersWithViews().AddRazorRuntimeCompilation();

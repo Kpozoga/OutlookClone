@@ -17,7 +17,7 @@
             <tr>
 
                 <div>
-                    @mail.Subject, @mail.Body.Substring(0, 20), @mail.From, @mail.Date
+                    @mail.Subject, @mail.Body.Substring(0, mail.Body.Length < 20 ? mail.Body.Length : 20), @mail.From, @mail.Date
                 </div>
 
             </tr>
