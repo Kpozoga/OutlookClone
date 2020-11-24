@@ -1,11 +1,12 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace OutlookClone.Models
 {
     public class ContactModel
-    {    
-        [Key]
-        public int Guid { get; set; }
+    {
+        public int Id { get; set; }
+        public string Guid { get; set; }
         
         [Required(ErrorMessage = "First name is required and must not be empty.")]
         [StringLength(200, ErrorMessage = "First name should not exceed 200 characters.")]
@@ -14,9 +15,15 @@ namespace OutlookClone.Models
         [Required(ErrorMessage = "Last name is required and must not be empty.")]
         [StringLength(200, ErrorMessage = "Last name should not exceed 200 characters.")]
         public string LastName { get; set; }
-        
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+
+        public ICollection<MailModel> Mails { get; set; }
+
+        public static explicit operator ContactModel(Microsoft.Graph.User usr)=>new ContactModel {
+            FirstName=usr.GivenName,
+            LastName=usr.Surname,
+            Guid=usr.Id,
+            Mails = new List<MailModel>()
+        };
+        public ContactModel() { Mails = new List<MailModel>(); }
     }
 }

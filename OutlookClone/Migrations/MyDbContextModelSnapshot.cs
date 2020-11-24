@@ -15,39 +15,48 @@ namespace OutlookClone.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9")
+                .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "5.0.0");
+
+            modelBuilder.Entity("ContactModelMailModel", b =>
+                {
+                    b.Property<Guid>("MailsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ToId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MailsId", "ToId");
+
+                    b.HasIndex("ToId");
+
+                    b.ToTable("ContactModelMailModel");
+                });
 
             modelBuilder.Entity("OutlookClone.Models.ContactModel", b =>
                 {
-                    b.Property<int>("Guid")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .UseIdentityColumn();
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Guid")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<Guid?>("MailModelId")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasKey("Id");
 
-                    b.HasKey("Guid");
-
-                    b.HasIndex("MailModelId");
-
-                    b.ToTable("ContactModel");
+                    b.ToTable("Contacts");
                 });
 
             modelBuilder.Entity("OutlookClone.Models.MailModel", b =>
@@ -57,8 +66,8 @@ namespace OutlookClone.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Body")
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -68,19 +77,27 @@ namespace OutlookClone.Migrations
 
                     b.Property<string>("Subject")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Mails");
                 });
 
-            modelBuilder.Entity("OutlookClone.Models.ContactModel", b =>
+            modelBuilder.Entity("ContactModelMailModel", b =>
                 {
                     b.HasOne("OutlookClone.Models.MailModel", null)
-                        .WithMany("To")
-                        .HasForeignKey("MailModelId");
+                        .WithMany()
+                        .HasForeignKey("MailsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OutlookClone.Models.ContactModel", null)
+                        .WithMany()
+                        .HasForeignKey("ToId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -7,8 +7,7 @@ namespace OutlookClone.Models
 {
     public class MailModel
     {
-        [Key]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         
         [Required(ErrorMessage = "Mail has to have a subject.")]
         [StringLength(50, ErrorMessage = "Subject can't be longer than 50 characters")]
@@ -21,7 +20,7 @@ namespace OutlookClone.Models
         public string From { get; set; }
         
         [Required]
-        public List<ContactModel> To { get; set; }
+        public ICollection<ContactModel> To { get; set; }
         
         [HiddenInput] 
         [DataType(DataType.DateTime)]
