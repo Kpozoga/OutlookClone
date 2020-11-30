@@ -14,5 +14,6 @@ namespace OutlookClone.Models
         }
         public DbSet<MailModel> Mails { get; set; }
         public DbSet<ContactModel> Contacts { get; set; }
+        public DbSet<GroupModel> Groups { get; set; }
     }
 }

@@ -17,13 +17,15 @@ namespace OutlookClone.Models
         public string LastName { get; set; }
 
         public ICollection<MailModel> Mails { get; set; }
+        public ICollection<GroupModel> Groups { get; set; }
 
         public static explicit operator ContactModel(Microsoft.Graph.User usr)=>new ContactModel {
             FirstName=usr.GivenName,
             LastName=usr.Surname,
             Guid=usr.Id,
-            Mails = new List<MailModel>()
+            Mails = new List<MailModel>(),
+            Groups= new List<GroupModel>()
         };
-        public ContactModel() { Mails = new List<MailModel>(); }
+        public ContactModel() { Mails = new List<MailModel>(); Groups = new List<GroupModel>(); }
     }
 }
