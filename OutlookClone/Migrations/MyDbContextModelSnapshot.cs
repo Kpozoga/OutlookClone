@@ -21,8 +21,8 @@ namespace OutlookClone.Migrations
 
             modelBuilder.Entity("ContactModelMailModel", b =>
                 {
-                    b.Property<Guid>("MailsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("MailsId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ToId")
                         .HasColumnType("int");
@@ -61,9 +61,10 @@ namespace OutlookClone.Migrations
 
             modelBuilder.Entity("OutlookClone.Models.MailModel", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
 
                     b.Property<string>("Body")
                         .HasMaxLength(1000)

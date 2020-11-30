@@ -10,8 +10,8 @@ using OutlookClone.Models;
 namespace OutlookClone.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20201124201159_baseeV2")]
-    partial class baseeV2
+    [Migration("20201130175411_baseV2")]
+    partial class baseV2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,8 +23,8 @@ namespace OutlookClone.Migrations
 
             modelBuilder.Entity("ContactModelMailModel", b =>
                 {
-                    b.Property<Guid>("MailsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("MailsId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ToId")
                         .HasColumnType("int");
@@ -63,9 +63,10 @@ namespace OutlookClone.Migrations
 
             modelBuilder.Entity("OutlookClone.Models.MailModel", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
 
                     b.Property<string>("Body")
                         .HasMaxLength(1000)

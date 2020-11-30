@@ -1,24 +1,53 @@
-@model IEnumerable<ContactModel>
-
+@model X.PagedList.IPagedList<ContactModel>
+@using X.PagedList.Mvc.Core
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 @{
     ViewData["Title"] = "Contacts";
 }
 
 <h2>@ViewBag.Title</h2>
 
+@using (Html.BeginForm("Index", "Contact", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
 <div>
-    <table>
-        <tbody>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th>
+                @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th>
+                @Html.ActionLink("Id", "Index", new { sortOrder = ViewBag.IdSortParm, currentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th></th>
+        </tr>
+
         @foreach (var contact in Model)
         {
             <tr>
-
-                <div>
-                    @contact.FirstName, @contact.LastName, @contact.Guid
-                </div>
-
+                <td>
+                    @contact.FirstName
+                </td>
+                <td>
+                    @contact.LastName
+                </td>
+                <td>
+                    @contact.Id
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = contact.Id })
+                </td>
             </tr>
         }
-        </tbody>
     </table>
 </div>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter}))

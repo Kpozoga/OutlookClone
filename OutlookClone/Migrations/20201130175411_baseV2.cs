@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace OutlookClone.Migrations
 {
-    public partial class baseeV2 : Migration
+    public partial class baseV2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -26,7 +26,8 @@ namespace OutlookClone.Migrations
                 name: "Mails",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Subject = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Body = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     From = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -41,7 +42,7 @@ namespace OutlookClone.Migrations
                 name: "ContactModelMailModel",
                 columns: table => new
                 {
-                    MailsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MailsId = table.Column<int>(type: "int", nullable: false),
                     ToId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

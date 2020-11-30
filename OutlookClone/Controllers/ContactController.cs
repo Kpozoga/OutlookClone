@@ -10,6 +10,7 @@ using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using Microsoft.Graph.Auth;
 using System.Security.Claims;
+using X.PagedList;
 
 namespace OutlookClone.Controllers
 {
@@ -21,10 +22,41 @@ namespace OutlookClone.Controllers
             this.db = db;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ImportContactsFromAzure2Db().Wait();
-            return View(db.Contacts.ToList());
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.LastNameSortParm = sortOrder == "last_name" ? "last_name_desc" : "last_name";
+            ViewBag.IdSortParm = sortOrder == "id" ? "id_desc" : "id";
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+            var contacts = from s in db.Contacts
+                           select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                contacts = contacts.Where(s => (s.FirstName+" "+s.LastName).Contains(searchString));
+            }
+            contacts = sortOrder switch
+            {
+                "name_desc" => contacts.OrderByDescending(s => s.FirstName),
+                "last_name" => contacts.OrderBy(s => s.LastName),
+                "last_name_desc" => contacts.OrderByDescending(s => s.LastName),
+                "id" => contacts.OrderBy(s => s.Id),
+                "id_desc" => contacts.OrderByDescending(s => s.Id),
+                _ => contacts.OrderBy(s => s.FirstName),
+            };
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+            return View(contacts.ToPagedList(pageNumber, pageSize));
         }
 
         public async Task ImportContactsFromAzure2Db()
@@ -45,7 +77,7 @@ namespace OutlookClone.Controllers
 
                 bool newUser = true;
                 foreach (var conD in contactsDB)
-                    if (conA.Id != conD.Guid)
+                    if (conA.Id == conD.Guid)
                         newUser = false;
                 if(newUser)
                     db.Contacts.Add((ContactModel)conA);
