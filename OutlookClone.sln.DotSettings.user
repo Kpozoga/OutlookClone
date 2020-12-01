@@ -1,6 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8c6a2c06_002D63fd_002D4600_002D8211_002Dbc06a9adcb62/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="MailUnitTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;MSTest::7E820237-0380-4952-83D6-BA1F421E03AD::.NETCoreApp,Version=v3.1::OutlookCloneTests.MailUnitTest&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8c6a2c06_002D63fd_002D4600_002D8211_002Dbc06a9adcb62/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="MailUnitTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;MSTest::7E820237-0380-4952-83D6-BA1F421E03AD::.NETCoreApp,Version=v3.1::OutlookCloneTests.MailUnitTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
