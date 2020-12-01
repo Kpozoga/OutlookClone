@@ -7,21 +7,43 @@
 <h2>@ViewBag.Title</h2>
 
 <div>
+
     <a asp-area="" asp-controller="Mail" asp-action="Create">
         <button type="button">Create new email</button>
     </a>
-    <table>
-        <tbody>
+    <table class="stylish-table">
+        <tr>
+            <th>Subject</th>
+            <th>Snippet</th>
+            <th>From</th>
+            <th>Date</th>
+            <th>Read</th>
+            <th>View</th>
+        </tr>
         @foreach (var mail in Model)
         {
-            <tr>
-
-                <div>
-                    @mail.Subject, @mail.Body.Substring(0, mail.Body.Length < 20 ? mail.Body.Length : 20), @mail.From, @mail.Date
-                </div>
-
-            </tr>
+            <a asp-area="" asp-controller="Mail" asp-action="Detail">
+                <tr>
+                    <td>
+                        @mail.Subject
+                    </td>
+                    <td>
+                        @mail.Body.Substring(0, mail.Body.Length < 20 ? mail.Body.Length : 20)...
+                    </td>
+                    <td>
+                        @mail.FromId
+                    </td>
+                    <td>
+                        @mail.Date
+                    </td>
+                    <td>
+                        <input type="checkbox">
+                    </td>
+                    <td>
+                        @Html.ActionLink("Detail", "Detail", new { id = mail.Id })
+                    </td>
+                </tr>
+            </a>
         }
-        </tbody>
     </table>
 </div>

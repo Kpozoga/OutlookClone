@@ -10,8 +10,8 @@ using OutlookClone.Models;
 namespace OutlookClone.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20201130214238_groupAdd")]
-    partial class groupAdd
+    [Migration("20201130223545_NewOrder")]
+    partial class NewOrder
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -57,6 +57,10 @@ namespace OutlookClone.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -110,8 +114,8 @@ namespace OutlookClone.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("From")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("FromId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Subject")
                         .IsRequired()

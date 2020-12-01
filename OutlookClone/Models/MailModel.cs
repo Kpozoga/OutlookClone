@@ -17,7 +17,7 @@ namespace OutlookClone.Models
         public string Body { get; set; }
         
         [HiddenInput]
-        public string From { get; set; }
+        public int FromId { get; set; }
         
         [Required]
         public ICollection<ContactModel> To { get; set; }
@@ -25,7 +25,5 @@ namespace OutlookClone.Models
         [HiddenInput] 
         [DataType(DataType.DateTime)]
         public DateTime Date { get; set; }
-        
-        public List<string> Attachments;
     }
 }

@@ -56,6 +56,10 @@ namespace OutlookClone.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -108,8 +112,8 @@ namespace OutlookClone.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("From")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("FromId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Subject")
                         .IsRequired()

@@ -10,6 +10,7 @@ namespace OutlookClone.Controllers
     public class MailController : Controller
     {
         private readonly MyDbContext db;
+
         public MailController(MyDbContext db)
         {
             this.db = db;
@@ -17,44 +18,76 @@ namespace OutlookClone.Controllers
 
         [HttpGet]
         public IActionResult Index()
-        {    
-            if(User.Identity.IsAuthenticated)
+        {
+            if (User == null || !User.Identity.IsAuthenticated)
             {
-                var myId = ((ClaimsIdentity)User.Identity).FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
-                var me = db.Contacts.Where(c => c.Guid == myId).First();
-                db.Entry(me).Collection(c => c.Mails).Load();
-                //var myMails = db.Mails.Where(m => m.To.Contains(me));
-                return View(me.Mails.ToList());
+                return Forbid();
             }
-            return View(db.Mails.ToList());
+
+            var userGuid = ((ClaimsIdentity) User.Identity)
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
+            var currentUser = db.Contacts.First(c => c.Guid == userGuid);
+
+            var mails = db.Mails.Where(mail => mail.To.Contains(currentUser)).ToList();
+
+            return View(mails);
         }
-        
+
+        [HttpGet]
+        public IActionResult Detail(int id)
+        {
+            if (User == null || !User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
+
+            var userGuid = ((ClaimsIdentity) User.Identity)
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
+            var currentUser = db.Contacts.First(c => c.Guid == userGuid);
+
+            var mail = db.Mails.First(model => model.Id == id);
+
+            // if (!mail.To.Contains(currentUser))
+            // {
+            //     return Forbid();
+            // }
+
+            return View(mail);
+        }
+
         [HttpGet]
         public IActionResult Create()
         {
+            if (User == null || !User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
+
+            ViewData["ContactList"] = db.Contacts.ToList();
+
             return View();
         }
 
         [HttpPost]
         public IActionResult CreatePost(MailModel mm)
         {
-
-            mm.Date = DateTime.Now;
-            //TODO: save mm to database  
-            mm.From = "test1@example.com";
-            if(User.Identity.IsAuthenticated)
+            if (User == null || !User.Identity.IsAuthenticated)
             {
-                mm.To = new List<ContactModel>();
-                var myId = ((ClaimsIdentity)User.Identity).FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
-                var me = db.Contacts.Where(c => c.Guid == myId).First();
-                mm.From = me.FirstName + " " + me.LastName;
-                mm.To.Add(me);
+                return Forbid();
             }
+
+            var userGuid = ((ClaimsIdentity) User.Identity)
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
+
+            mm.FromId = db.Contacts.First(contact => contact.Guid == userGuid).Id;
+            var to = Request.Form["to"].ToList().Select(int.Parse);
+            mm.To = db.Contacts.Where(c => to.Contains(c.Id)).ToList();
+            mm.Date = DateTime.Now;
             db.Mails.Add(mm);
             db.SaveChanges();
+
             // always redirect from Post endpoint to avoid double submission
             return RedirectToAction("Index");
-
         }
     }
 }

@@ -39,11 +39,10 @@ namespace OutlookClone.Controllers
             }
 
             ViewBag.CurrentFilter = searchString;
-            var contacts = from s in db.Contacts
-                           select s;
+            var contacts = from c in db.Contacts select c;
             if (!String.IsNullOrEmpty(searchString))
             {
-                contacts = contacts.Where(s => (s.FirstName+" "+s.LastName).Contains(searchString));
+                contacts = contacts.Where(c => (c.FullName).Contains(searchString));
             }
             contacts = sortOrder switch
             {
@@ -85,5 +84,9 @@ namespace OutlookClone.Controllers
             db.SaveChanges();
         }
 
+        public IActionResult Detail(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
