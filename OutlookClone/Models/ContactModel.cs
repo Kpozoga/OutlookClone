@@ -20,8 +20,6 @@ namespace OutlookClone.Models
 
         public ICollection<GroupModel> Groups { get; set; }
 
-        [Required] [EmailAddress] public string Email { get; set; }
-
         public static explicit operator ContactModel(Microsoft.Graph.User usr) => new ContactModel
         {
             FirstName = usr.GivenName,

@@ -11,19 +11,19 @@
     <a asp-area="" asp-controller="Mail" asp-action="Create">
         <button type="button">Create new email</button>
     </a>
-    <table class="stylish-table">
+    <table id="table-id" class="stylish-table">
         <tr>
             <th>Subject</th>
             <th>Snippet</th>
             <th>From</th>
             <th>Date</th>
             <th>Read</th>
-            <th>View</th>
+            <th></th>
+            <th></th>
         </tr>
         @foreach (var mail in Model)
         {
-            <a asp-area="" asp-controller="Mail" asp-action="Detail">
-                <tr>
+                <tr id="tr-@mail.Id">
                     <td>
                         @mail.Subject
                     </td>
@@ -42,8 +42,10 @@
                     <td>
                         @Html.ActionLink("Detail", "Detail", new { id = mail.Id })
                     </td>
+                    <td>
+                        <a href="#" onclick="deleteMail('@Url.Action("Delete", "Mail", null)/@mail.Id', this, 'table-id')">Delete</a>
+                    </td>
                 </tr>
-            </a>
         }
     </table>
 </div>

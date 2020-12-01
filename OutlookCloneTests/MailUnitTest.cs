@@ -16,7 +16,6 @@ namespace OutlookCloneTests
             {
                 Id = 1,
                 Guid = "john-doe-guid",
-                Email = "abc@example.com",
                 FirstName = "John",
                 LastName = "Doe",
                 Groups = new List<GroupModel>(),

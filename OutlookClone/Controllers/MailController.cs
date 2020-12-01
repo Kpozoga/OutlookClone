@@ -89,5 +89,16 @@ namespace OutlookClone.Controllers
             // always redirect from Post endpoint to avoid double submission
             return RedirectToAction("Index");
         }
+
+        [HttpDelete]
+        public IActionResult Delete(int id)
+        {
+            var mail = new MailModel{ Id = id };
+            db.Mails.Attach(mail);
+            db.Mails.Remove(mail);
+            db.SaveChanges();
+            
+            return RedirectToAction("Index");
+        }
     }
 }
