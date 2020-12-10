@@ -1,5 +1,3 @@
-using System;
-
 namespace OutlookClone.Models
 {
     public class ErrorViewModel

@@ -1,51 +1,69 @@
-@model IEnumerable<MailModel>
-
+@model X.PagedList.IPagedList<MailModel>
+@using X.PagedList.Mvc.Core
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css"/>
 @{
-    ViewData["Title"] = "Inbox";
+    ViewData["Title"] = "Mails";
 }
 
 <h2>@ViewBag.Title</h2>
 
+@using (Html.BeginForm("Index", "Mail", FormMethod.Get))
+{
+    <p>
+        Find by subject: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search"/>
+    </p>
+}
 <div>
-
-    <a asp-area="" asp-controller="Mail" asp-action="Create">
-        <button type="button">Create new email</button>
-    </a>
-    <table id="table-id" class="stylish-table">
+    <table class="table">
         <tr>
-            <th>Subject</th>
-            <th>Snippet</th>
-            <th>From</th>
-            <th>Date</th>
-            <th>Read</th>
+            <th>
+                @Html.ActionLink("Subject", "Index", new {sortOrder = ViewBag.SubjectSortParm, currentFilter = ViewBag.CurrentFilter})
+            </th>
+            <th>
+                @Html.ActionLink("Snippet", "Index", new {sortOrder = ViewBag.SnippetSortParm, currentFilter = ViewBag.CurrentFilter})
+            </th>
+            <th>
+                @Html.ActionLink("From", "Index", new {sortOrder = ViewBag.FromSortParm, currentFilter = ViewBag.CurrentFilter})
+            </th>
+            <th>
+                @Html.ActionLink("Date", "Index", new {sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter})
+            </th>
+            <th>
+                @Html.ActionLink("Read", "Index", new {sortOrder = ViewBag.ReadSortParm, currentFilter = ViewBag.CurrentFilter})
+            </th>
             <th></th>
             <th></th>
         </tr>
+
         @foreach (var mail in Model)
         {
-                <tr id="tr-@mail.Id">
-                    <td>
-                        @mail.Subject
-                    </td>
-                    <td>
-                        @mail.Body.Substring(0, mail.Body.Length < 20 ? mail.Body.Length : 20)...
-                    </td>
-                    <td>
-                        @mail.FromId
-                    </td>
-                    <td>
-                        @mail.Date
-                    </td>
-                    <td>
-                        <input type="checkbox">
-                    </td>
-                    <td>
-                        @Html.ActionLink("Detail", "Detail", new { id = mail.Id })
-                    </td>
-                    <td>
-                        <a href="#" onclick="deleteMail('@Url.Action("Delete", "Mail", null)/@mail.Id', this, 'table-id')">Delete</a>
-                    </td>
-                </tr>
+            <tr id="tr-@mail.Id">
+                <td>
+                    @mail.Subject
+                </td>
+                <td>
+                    @mail.Body.Substring(0, mail.Body.Length < 20 ? mail.Body.Length : 20)...
+                </td>
+                <td>
+                    @mail.FromId
+                </td>
+                <td>
+                    @mail.Date
+                </td>
+                <td>
+                    <input type="checkbox" checked=@mail.Read onclick="markRead('@Url.Action("SetRead", "Mail", null)', @mail.Id, this.checked)">
+                </td>
+                <td>
+                    @Html.ActionLink("Detail", "Detail", new {id = mail.Id})
+                </td>
+                <td>
+                    <a href="#" onclick="deleteMail('@Url.Action("Delete", "Mail", null)/@mail.Id', this, 'table-id')">Delete</a>
+                </td>
+            </tr>
         }
     </table>
 </div>
+<br/>
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index", new {page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter}))

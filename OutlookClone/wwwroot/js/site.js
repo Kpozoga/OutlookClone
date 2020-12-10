@@ -7,10 +7,25 @@ function deleteMail(url, row, table_id) {
     $.ajax({
         url: url,
         type: 'DELETE',
-        success: function(result) {
+        success: result => {
             console.log(result)
             let i = row.parentNode.parentNode.rowIndex;
             document.getElementById(table_id).deleteRow(i);
+        }
+    });
+}
+
+function markRead(url, mail_id, read) {
+    // TODO: mark email as read
+    $.ajax({
+        url: url,
+        type: "POST",
+        data: {
+            "mail_id": mail_id,
+            "read": read,
+        },
+        success: result => {
+            console.log(result)
         }
     });
 }

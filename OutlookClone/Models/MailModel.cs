@@ -25,5 +25,7 @@ namespace OutlookClone.Models
         [HiddenInput] 
         [DataType(DataType.DateTime)]
         public DateTime Date { get; set; }
+
+        public bool Read { get; set; } = false;
     }
 }

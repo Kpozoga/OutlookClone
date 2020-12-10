@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OutlookClone.Models;
 using X.PagedList;
@@ -11,7 +8,8 @@ namespace OutlookClone.Controllers
 {
     public class GroupController : Controller
     {
-        private readonly Models.MyDbContext db;
+        private readonly MyDbContext db;
+        private const int PageSize = 10;
 
         public GroupController(MyDbContext db)
         {
@@ -21,7 +19,7 @@ namespace OutlookClone.Controllers
         public IActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
-            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.IdSortParm = sortOrder == "id" ? "id_desc" : "id";
 
             if (searchString != null)
@@ -35,7 +33,7 @@ namespace OutlookClone.Controllers
 
             ViewBag.CurrentFilter = searchString;
             var groups = from g in db.Groups select g;
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 groups = groups.Where(c => (c.GroupName).Contains(searchString));
             }
@@ -46,9 +44,8 @@ namespace OutlookClone.Controllers
                 "id_desc" => groups.OrderByDescending(g => g.Id),
                 _ => groups.OrderBy(g => g.GroupName),
             };
-            int pageSize = 3;
-            int pageNumber = (page ?? 1);
-            return View(groups.ToPagedList(pageNumber, pageSize));
+            
+            return View(groups.ToPagedList(page ?? 1, PageSize));
         }
 
         [HttpGet]
