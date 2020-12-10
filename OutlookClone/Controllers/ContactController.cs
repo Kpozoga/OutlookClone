@@ -7,6 +7,7 @@ using Microsoft.Graph;
 using Microsoft.Identity.Client;
 using Microsoft.Graph.Auth;
 using X.PagedList;
+using OutlookClone.Utils;
 
 namespace OutlookClone.Controllers
 {
@@ -22,11 +23,21 @@ namespace OutlookClone.Controllers
 
         public IActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            if (User == null || !User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
+            var currentUser = UserUtils.GetCurrentUser(User, db);
+            if (!currentUser.IsActive&&!currentUser.IsAdmin)
+                return Forbid();
             ImportContactsFromAzure2Db().Wait();
+            ViewBag.CurrentUser = currentUser;
             ViewBag.CurrentSort = sortOrder;
             ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.LastNameSortParm = sortOrder == "last_name" ? "last_name_desc" : "last_name";
             ViewBag.IdSortParm = sortOrder == "id" ? "id_desc" : "id";
+            ViewBag.JoinDateSortParm = sortOrder == "date" ? "date_desc" : "date";
+            ViewBag.SortOrder = sortOrder;
             if (searchString != null)
             {
                 page = 1;
@@ -49,9 +60,14 @@ namespace OutlookClone.Controllers
                 "last_name_desc" => contacts.OrderByDescending(s => s.LastName),
                 "id" => contacts.OrderBy(s => s.Id),
                 "id_desc" => contacts.OrderByDescending(s => s.Id),
+                "date" => contacts.OrderBy(s => s.JoinDate),
+                "date_desc" => contacts.OrderByDescending(s => s.JoinDate),
                 _ => contacts.OrderBy(s => s.FirstName),
             };
-            
+
+            if (!currentUser.IsAdmin)
+                contacts = contacts.Where(c => c.IsActive);
+
             return View(contacts.ToPagedList(page ?? 1, PageSize));
         }
 
@@ -81,9 +97,35 @@ namespace OutlookClone.Controllers
             db.SaveChanges();
         }
 
-        public IActionResult Detail(int id)
+
+        public IActionResult Disenable(int id)
         {
-            throw new NotImplementedException();
+            if (!UserUtils.GetCurrentUser(User,db).IsAdmin)
+            {
+                return Forbid();
+            }
+            var user = db.Contacts.First(c => c.Id == id);
+            user.IsActive = !user.IsActive;
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+        public IActionResult Road2Admin()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult BecomeAdmin(string pass)
+        {
+            if(pass== "'?{_4gGBb>}mz6?A")
+            {
+                var me = UserUtils.GetCurrentUser(User, db);
+                me.IsAdmin = true;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Road2Admin");
         }
     }
 }

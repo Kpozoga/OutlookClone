@@ -19,12 +19,39 @@
         <tr>
             <th>
                 @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+                @if (ViewBag.SortOrder == "name_desc")
+                {
+                    <i style="border: solid black; border-width: 0 2px 2px 0; display: inline-block; padding: 3px;transform:rotate(45deg);"></i>}
+                @if (string.IsNullOrEmpty(ViewBag.SortOrder))
+                {
+                    <i style="border: solid black; border-width: 0 2px 2px 0; display: inline-block; padding: 3px;transform:rotate(-135deg);"></i>}
             </th>
             <th>
                 @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter })
+                @if (ViewBag.SortOrder == "last_name_desc")
+                {
+                    <i style="border: solid black; border-width: 0 2px 2px 0; display: inline-block; padding: 3px;transform:rotate(45deg);"></i>}
+                @if (ViewBag.SortOrder == "last_name")
+                {
+                    <i style="border: solid black; border-width: 0 2px 2px 0; display: inline-block; padding: 3px;transform:rotate(-135deg);"></i>}
             </th>
             <th>
                 @Html.ActionLink("Id", "Index", new { sortOrder = ViewBag.IdSortParm, currentFilter = ViewBag.CurrentFilter })
+                @if (ViewBag.SortOrder == "id_desc")
+                {
+                    <i style="border: solid black; border-width: 0 2px 2px 0; display: inline-block; padding: 3px;transform:rotate(45deg);"></i>}
+                @if (ViewBag.SortOrder == "id")
+                {
+                    <i style="border: solid black; border-width: 0 2px 2px 0; display: inline-block; padding: 3px;transform:rotate(-135deg);"></i>}
+            </th>
+            <th>
+                @Html.ActionLink("Join Date", "Index", new { sortOrder = ViewBag.JoinDateSortParm, currentFilter = ViewBag.CurrentFilter })
+                @if (ViewBag.SortOrder == "date_desc")
+                {
+                    <i style="border: solid black; border-width: 0 2px 2px 0; display: inline-block; padding: 3px;transform:rotate(45deg);"></i>}
+                @if (ViewBag.SortOrder == "date")
+                {
+                    <i style="border: solid black; border-width: 0 2px 2px 0; display: inline-block; padding: 3px;transform:rotate(-135deg);"></i>}
             </th>
             <th></th>
         </tr>
@@ -42,8 +69,14 @@
                     @contact.Id
                 </td>
                 <td>
-                    @Html.ActionLink("Details", "Detail", new { id = contact.Id })
+                    @contact.JoinDate
                 </td>
+                @if (ViewBag.CurrentUser.IsAdmin)
+                {
+            <td>              
+                @Html.ActionLink(contact.IsActive? "Disable":"Activate", "Disenable", new { id = contact.Id })
+            </td>
+                }
             </tr>
         }
     </table>

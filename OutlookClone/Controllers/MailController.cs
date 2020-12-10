@@ -24,7 +24,7 @@ namespace OutlookClone.Controllers
             {
                 return Forbid();
             }
-            
+            if (!Utils.UserUtils.GetCurrentUser(User, db).IsActive) return Forbid();
             ViewBag.CurrentSort = sortOrder;
             ViewBag.SubjectSortParm = string.IsNullOrEmpty(sortOrder) ? "subject_desc" : "";
             ViewBag.SnippetSortParm = sortOrder == "snippet" ? "snippet_desc" : "snippet";

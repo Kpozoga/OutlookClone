@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Password";
+}
+
+<div style="width:160px; margin:0 auto;">
+    @using (Html.BeginForm("BecomeAdmin", "Contact", FormMethod.Post))
+    {
+        <p>
+            @Html.TextBox("pass")
+            <input type="submit" value="Submit" />
+        </p>
+    }
+</div>
