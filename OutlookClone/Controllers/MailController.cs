@@ -1,13 +1,17 @@
-using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using OutlookClone.Models;
 using System.Text;
 using System.Threading.Tasks;
 using RestSharp;
+using OutlookClone.Services;
 using X.PagedList;
 
 namespace OutlookClone.Controllers
@@ -15,11 +19,16 @@ namespace OutlookClone.Controllers
     public class MailController : Controller
     {
         private readonly MyDbContext db;
+        private readonly IWebHostEnvironment env;
+        private readonly IConfiguration configuration;
+        
         private const int PageSize = 10;
 
-        public MailController(MyDbContext db)
+        public MailController(MyDbContext db, IWebHostEnvironment env, IConfiguration configuration)
         {
             this.db = db;
+            this.env = env;
+            this.configuration = configuration;
         }
         
         [HttpGet]
@@ -88,7 +97,9 @@ namespace OutlookClone.Controllers
                 .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
             var currentUser = db.Contacts.First(c => c.Guid == userGuid);
 
-            var mail = db.Mails.First(model => model.Id == id);
+            var mail = db.Mails
+                .Include(model => model.Attachments)
+                .First(model => model.Id == id);
 
             // if (!mail.To.Contains(currentUser))
             // {
@@ -124,8 +135,34 @@ namespace OutlookClone.Controllers
             mm.FromId = currentUser.Id;
             var to = Request.Form["to"].ToList().Select(int.Parse);
             mm.To = db.Contacts.Where(c => to.Contains(c.Id)).ToList();
-            mm.Date = DateTime.Now;
             db.Mails.Add(mm);
+            
+            # region Upload File
+            var uploads = Path.Combine(env.WebRootPath, "uploads");  
+            var exists = Directory.Exists(uploads);  
+            if (!exists)  
+                Directory.CreateDirectory(uploads);
+            
+            var objBlobService = new BlobStorageService(configuration);
+
+            foreach (var file in Request.Form.Files)
+            {
+                var attachment = new AttachmentModel();
+                
+                var fileStream = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create);
+                var mimeType = file.ContentType;
+                var fileData = new byte[file.Length];
+                
+                fileStream.Write(fileData);
+
+                attachment.FileName = file.FileName;
+                attachment.FileUri = objBlobService.UploadFileToBlob(file.FileName, fileData, mimeType);
+                
+                mm.Attachments.Add(attachment);
+            }
+
+            # endregion
+            
             db.SaveChanges();
             
             _ = Utils.UserUtils.SendEmailNotification(currentUser, mm, null, Url.Action("Detail", "Mail", null, Request.Scheme));
@@ -159,8 +196,17 @@ namespace OutlookClone.Controllers
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            var mail = new MailModel{ Id = id };
-            db.Mails.Attach(mail);
+            // that would be a f***ing one liner in Django, I can't even control cascading nor 
+            var mail = db.Mails
+                .Where(m => m.Id == id)
+                .Include(m => m.Attachments)
+                .First();
+            foreach (var attachment in mail.Attachments)
+            {
+                var objBlob = new BlobStorageService(configuration);
+                objBlob.DeleteBlobData(attachment.FileUri);
+                db.Attachments.Remove(attachment);
+            }
             db.Mails.Remove(mail);
             db.SaveChanges();
             
