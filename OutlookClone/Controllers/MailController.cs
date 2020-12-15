@@ -114,15 +114,17 @@ namespace OutlookClone.Controllers
                 return Forbid();
             }
 
-            var userGuid = ((ClaimsIdentity) User.Identity)
-                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
+            var currentUser = Utils.UserUtils.GetCurrentUser(User, db);
 
-            mm.FromId = db.Contacts.First(contact => contact.Guid == userGuid).Id;
+            mm.FromId = currentUser.Id;
             var to = Request.Form["to"].ToList().Select(int.Parse);
             mm.To = db.Contacts.Where(c => to.Contains(c.Id)).ToList();
             mm.Date = DateTime.Now;
             db.Mails.Add(mm);
             db.SaveChanges();
+            
+            _ = Utils.UserUtils.SendEmailNotification(currentUser, mm, null, Url.Action("Detail", "Mail", null, Request.Scheme));
+            _ = Utils.UserUtils.SendSmsNotification(currentUser, mm, null, Url.Action("Detail", "Mail", null, Request.Scheme));
 
             // always redirect from Post endpoint to avoid double submission
             return RedirectToAction("Index");

@@ -127,5 +127,30 @@ namespace OutlookClone.Controllers
             }
             return RedirectToAction("Road2Admin");
         }
+        public IActionResult Profile()
+        {
+            if (User == null || !User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
+            var currentUser = UserUtils.GetCurrentUser(User, db);
+
+            return View(currentUser);
+        }
+        [HttpPost]
+        public IActionResult ProfilePost(ContactModel usr)
+        {
+            if (User == null || !User.Identity.IsAuthenticated)
+            {
+                return Forbid();
+            }
+            var currentUser = UserUtils.GetCurrentUser(User, db);
+            currentUser.Email = usr.Email;
+            currentUser.PhoneNumber = usr.PhoneNumber;
+            db.Update(currentUser);
+            db.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

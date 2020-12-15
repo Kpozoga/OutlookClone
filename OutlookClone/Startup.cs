@@ -28,6 +28,7 @@ namespace OutlookClone
                 .AddAzureADB2C(options => Configuration.Bind("AzureAdB2C", options));
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddRazorPages();
+            Utils.UserUtils.SetConfig(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

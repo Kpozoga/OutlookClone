@@ -23,6 +23,10 @@ namespace OutlookClone.Models
         public DateTime JoinDate { get; set; }
         public bool IsActive { get; set; }
         public bool IsAdmin { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
+        [Phone]
+        public string PhoneNumber { get; set; }
 
         public ICollection<MailModel> Mails { get; set; }
 
