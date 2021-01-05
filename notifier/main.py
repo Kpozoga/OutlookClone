@@ -1,7 +1,6 @@
 #! /bin/python3
 
 import argparse
-
 import requests
 
 NOTIFICATIONS_URL = f"https://mini-notification-service.azurewebsites.net/notifications"
@@ -32,9 +31,12 @@ def run(user_key: str):
                 )
 
 
-if __name__ == "__main__":
+def parse_args():
     parser = argparse.ArgumentParser(description='Get notifications from Outlook Clone right to your desktop')
     parser.add_argument('user_key', metavar='user-key', type=str, help='your key from Azure AAD found in Outlook Clone')
-    args = parser.parse_args()
+    return parser.parse_args()
 
+
+if __name__ == "__main__":
+    args = parse_args()
     run(args.user_key)
