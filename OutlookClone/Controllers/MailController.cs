@@ -163,21 +163,20 @@ namespace OutlookClone.Controllers
             _ = Utils.UserUtils.SendEmailNotification(currentUser, mm, null, Url.Action("Detail", "Mail", null, Request.Scheme));
             _ = Utils.UserUtils.SendSmsNotification(currentUser, mm, null, Url.Action("Detail", "Mail", null, Request.Scheme));
 
-            var message = "";
-            var recipientList = "";
-            var withAttachments = "";
+            var message = mm.Body;
+            var recipientList = mm.To.Select(c => c.Email).ToList();
+            var withAttachments = (mm.Attachments.Count > 0).ToString();
                         
             // send request to NotificationService.API
             var jsonObject = (dynamic)new JsonObject();
             jsonObject.content = message;
             jsonObject.contentType = "string";
-            jsonObject.recepientsList = new List<string> { };
-            jsonObject.withAttachments = false;
-
+            jsonObject.recepientsList = recipientList;
+            jsonObject.withAttachments = withAttachments;
+    
             var content = new StringContent(jsonObject.ToString(), Encoding.UTF8, "application/json");
             var client = new HttpClient();
-            // TODO: fill with real api-key
-            client.DefaultRequestHeaders.Add("x-api-key", "f5e4713d-e636-48c0-bb33-b478040dd047");
+            client.DefaultRequestHeaders.Add("x-api-key", "2876e513-c386-4073-af9b-1a9d89732fcd");
             var response = await client.PostAsync(
                 "https://mini-notification-service.azurewebsites.net/notifications",
                 content
