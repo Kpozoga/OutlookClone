@@ -137,23 +137,18 @@ namespace OutlookClone.Controllers
             mm.To = db.Contacts.Where(c => to.Contains(c.Id)).ToList();
             db.Mails.Add(mm);
             
-            # region Upload File
-            var uploads = Path.Combine(env.WebRootPath, "uploads");  
-            var exists = Directory.Exists(uploads);  
-            if (!exists)  
-                Directory.CreateDirectory(uploads);
-            
+            # region Upload File         
             var objBlobService = new BlobStorageService(configuration);
 
             foreach (var file in Request.Form.Files)
             {
                 var attachment = new AttachmentModel();
                 
-                var fileStream = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create);
+                var fileStream = file.OpenReadStream();
                 var mimeType = file.ContentType;
                 var fileData = new byte[file.Length];
-                
-                fileStream.Write(fileData);
+
+                fileStream.Read(fileData, 0, (int)file.Length);
 
                 attachment.FileName = file.FileName;
                 attachment.FileUri = objBlobService.UploadFileToBlob(file.FileName, fileData, mimeType);
