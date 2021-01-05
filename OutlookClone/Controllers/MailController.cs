@@ -1,8 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using OutlookClone.Models;
+using System.Text;
+using System.Threading.Tasks;
+using RestSharp;
 using X.PagedList;
 
 namespace OutlookClone.Controllers
@@ -107,7 +112,7 @@ namespace OutlookClone.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreatePost(MailModel mm)
+        public async Task<IActionResult> CreatePost(MailModel mm)
         {
             if (User == null || !User.Identity.IsAuthenticated)
             {
@@ -125,6 +130,27 @@ namespace OutlookClone.Controllers
             
             _ = Utils.UserUtils.SendEmailNotification(currentUser, mm, null, Url.Action("Detail", "Mail", null, Request.Scheme));
             _ = Utils.UserUtils.SendSmsNotification(currentUser, mm, null, Url.Action("Detail", "Mail", null, Request.Scheme));
+
+            var message = "";
+            var recipientList = "";
+            var withAttachments = "";
+                        
+            // send request to NotificationService.API
+            var jsonObject = (dynamic)new JsonObject();
+            jsonObject.content = message;
+            jsonObject.contentType = "string";
+            jsonObject.recepientsList = new List<string> { };
+            jsonObject.withAttachments = false;
+
+            var content = new StringContent(jsonObject.ToString(), Encoding.UTF8, "application/json");
+            var client = new HttpClient();
+            // TODO: fill with real api-key
+            client.DefaultRequestHeaders.Add("x-api-key", "f5e4713d-e636-48c0-bb33-b478040dd047");
+            var response = await client.PostAsync(
+                "https://mini-notification-service.azurewebsites.net/notifications",
+                content
+            );
+            var responseString = await response.Content.ReadAsStringAsync(); // comment this out?
 
             // always redirect from Post endpoint to avoid double submission
             return RedirectToAction("Index");
