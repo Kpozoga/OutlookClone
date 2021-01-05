@@ -28,6 +28,18 @@
 @Model.Body                    
 </textarea>
                 </div>
+
+                <div class="form-group">
+                    <label for="attachments-id" class="control-label">Attachments</label>
+                    <ul>
+                        @foreach (var file in @Model.Attachments)
+                        {
+                            <li>
+                                <a href="@file.FileUri" download> @file.FileName</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

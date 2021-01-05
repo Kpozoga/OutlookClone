@@ -26,6 +26,13 @@ namespace OutlookClone.Models
         [DataType(DataType.DateTime)]
         public DateTime Date { get; set; }
 
-        public bool Read { get; set; } = false;
+        public bool Read { get; set; }
+        
+        public ICollection<AttachmentModel> Attachments { get; set; }
+
+        public MailModel()
+        {
+            Date = DateTime.Now;
+        }
     }
 }

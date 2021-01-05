@@ -7,6 +7,10 @@
 
 <h2>@ViewBag.Title</h2>
 
+<a asp-area="" asp-controller="Mail" asp-action="Create">
+    <button type="button">Create new email</button>
+</a>
+
 @using (Html.BeginForm("Index", "Mail", FormMethod.Get))
 {
     <p>
