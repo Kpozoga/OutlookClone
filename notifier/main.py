@@ -12,24 +12,26 @@ def format_message(data: dict):
 
 def run(user_key: str):
     while True:
-        r = requests.get(
-            NOTIFICATIONS_URL,
-            headers={"x-api-key": "f5e4713d-e636-48c0-bb33-b478040dd047"}  # don't keep it in code
-        )
-        data = r.json()
-        for notification in data["notifications"]:
+        try:
             r = requests.get(
-                f"{NOTIFICATIONS_URL}/{notification['id']}",
-                headers={"x-api-key": "f5e4713d-e636-48c0-bb33-b478040dd047"}  # don't keep it in code
+                NOTIFICATIONS_URL,
+                headers={"x-api-key": "2876e513-c386-4073-af9b-1a9d89732fcd"}  # don't keep it in code
             )
             data = r.json()
-            if user_key in data["recipientsList"]:
-                print(format_message(data))
-                requests.delete(
+            for notification in data["notifications"]:
+                r = requests.get(
                     f"{NOTIFICATIONS_URL}/{notification['id']}",
-                    headers={"x-api-key": "f5e4713d-e636-48c0-bb33-b478040dd047"}  # don't keep it in code
+                    headers={"x-api-key": "2876e513-c386-4073-af9b-1a9d89732fcd"}  # don't keep it in code
                 )
-
+                data = r.json()
+                if user_key in data["recipientsList"]:
+                    print(format_message(data))
+                    requests.delete(
+                        f"{NOTIFICATIONS_URL}/{notification['id']}",
+                        headers={"x-api-key": "2876e513-c386-4073-af9b-1a9d89732fcd"}  # don't keep it in code
+                    )
+        except Exception:
+            pass
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Get notifications from Outlook Clone right to your desktop')
