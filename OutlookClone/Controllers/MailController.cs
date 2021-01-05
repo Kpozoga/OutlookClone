@@ -149,11 +149,11 @@ namespace OutlookClone.Controllers
             {
                 var attachment = new AttachmentModel();
                 
-                var fileStream = new FileStream(Path.Combine(uploads, file.FileName), FileMode.Create);
+                var fileStream = file.OpenReadStream();
                 var mimeType = file.ContentType;
                 var fileData = new byte[file.Length];
-                
-                fileStream.Write(fileData);
+
+                fileStream.Read(fileData, 0, (int)file.Length);
 
                 attachment.FileName = file.FileName;
                 attachment.FileUri = objBlobService.UploadFileToBlob(file.FileName, fileData, mimeType);

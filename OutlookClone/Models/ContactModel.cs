@@ -26,6 +26,8 @@ namespace OutlookClone.Models
         [EmailAddress]
         public string Email { get; set; }
         [Phone]
+        [RegularExpression(@"[+][0-9]{2}[0-9]{9}[0-9]?$",
+                   ErrorMessage = "Entered phone format is not valid.")]
         public string PhoneNumber { get; set; }
 
         public ICollection<MailModel> Mails { get; set; }
